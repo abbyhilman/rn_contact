@@ -28,6 +28,7 @@ import {
   getById,
 } from '../../redux/action';
 import {useForm, showMessage} from '../../utils';
+import {ScrollView} from 'react-native-gesture-handler';
 
 const {width, height} = Dimensions.get('screen');
 
@@ -215,7 +216,7 @@ const Contact = () => {
   };
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{flex: 1}}>
       <Searchbar
         value={searchText}
         placeholder={'Search Contact'}
@@ -226,32 +227,33 @@ const Contact = () => {
         onClear={() => setSearchText('')}
         onChangeText={text => handleSearch(text)}
       />
-
-      {searchText === '' ? (
-        <FlatList
-          data={contact}
-          onRefresh={() => onRefresh()}
-          refreshing={refresh}
-          style={{marginTop: RFValue(10)}}
-          renderItem={({item}) => ListContact(item)}
-          keyExtractor={item => item.id}
+      <ScrollView>
+        {searchText === '' ? (
+          <FlatList
+            data={contact}
+            onRefresh={() => onRefresh()}
+            refreshing={refresh}
+            style={{marginTop: RFValue(10)}}
+            renderItem={({item}) => ListContact(item)}
+            keyExtractor={item => item.id}
+          />
+        ) : (
+          <FlatList
+            data={data}
+            style={{marginTop: RFValue(10)}}
+            renderItem={({item}) => ListContact(item)}
+            keyExtractor={item => item.id}
+          />
+        )}
+        <Button
+          title={'New Contact'}
+          onPress={() => this.RBSheet.open()}
+          style={{
+            width: width * 0.9,
+            alignSelf: 'center',
+          }}
         />
-      ) : (
-        <FlatList
-          data={data}
-          style={{marginTop: RFValue(10)}}
-          renderItem={({item}) => ListContact(item)}
-          keyExtractor={item => item.id}
-        />
-      )}
-      <Button
-        title={'New Contact'}
-        onPress={() => this.RBSheet.open()}
-        style={{
-          width: width * 0.9,
-          alignSelf: 'center',
-        }}
-      />
+      </ScrollView>
       <RBSheet
         ref={ref => {
           this.RBSheet = ref;
