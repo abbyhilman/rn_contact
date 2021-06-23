@@ -1,6 +1,6 @@
 # React Native Contact List
 
-## How to run the demo
+## How to run this repo
 
 clone this repo, change branch to PokedexUpdate
 
