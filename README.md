@@ -2,7 +2,7 @@
 
 ## How to run this repo
 
-clone this repo, change branch to PokedexUpdate
+clone this repo
 
 - npm install
 - npm ios or npm android
