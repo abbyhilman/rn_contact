@@ -1,4 +1,3 @@
-import axios from 'axios';
 import React, {useEffect, useState} from 'react';
 import {
   View,
@@ -10,6 +9,7 @@ import {
   SafeAreaView,
   Image,
   Button,
+  RefreshControl,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import RBSheet from 'react-native-raw-bottom-sheet';
@@ -43,6 +43,10 @@ const Contact = () => {
     age: null,
     photo: '',
   });
+  const [name, setNamme] = useState('');
+  const [lastname, setLastName] = useState('');
+  const [agee, setAgee] = useState(null);
+  const [image, setImage] = useState('');
   const [searchText, setSearchText] = useState('');
 
   const onSubmit = () => {
@@ -61,8 +65,10 @@ const Contact = () => {
   }, [dispatch]);
 
   const onRefresh = () => {
+    setRefresh(true);
     dispatch(setLoading(true));
     dispatch(getContact());
+    setRefresh(false);
   };
 
   const handleSearch = text => {
@@ -85,14 +91,26 @@ const Contact = () => {
 
   const onEdit = id => {
     this.RBSheetEdit.close();
-    let resultObj = {};
-    Object.keys(form).map(obj => {
-      if (form[obj]) {
-        resultObj[obj] = form[obj];
-      }
-    });
+
+    const data = {
+      firstName: name,
+      lastName: lastname,
+      age: agee,
+      photo: image,
+    };
     dispatch(setLoading(true));
-    dispatch(editContact(id, resultObj));
+    dispatch(editContact(id, data));
+    setNamme('');
+    setLastName('');
+    setAgee('');
+    setImage('');
+  };
+
+  const onClear = () => {
+    setNamme('');
+    setLastName('');
+    setAgee('');
+    setImage('');
   };
 
   const ListContact = item => {
@@ -167,8 +185,10 @@ const Contact = () => {
             closeOnDragDown={true}
             closeOnPressMask={true}
             closeOnPressBack={true}
+            keyboardAvoidingViewEnabled={true}
             height={500}
             openDuration={250}
+            onClose={() => onClear()}
             customStyles={{
               container: {
                 borderTopLeftRadius: RFValue(16),
@@ -179,32 +199,32 @@ const Contact = () => {
               <InputText
                 label="First Name"
                 placeholder="Type your first name"
-                value={form.firstName}
-                onChangeText={value => setForm('firstName', value)}
+                value={name || item.firstName}
+                onChangeText={value => setNamme(value)}
               />
               <Gap height={16} />
               <InputText
                 label="Last Name"
-                placeholder="Type your laste name"
-                value={form.lastName}
-                onChangeText={value => setForm('lastName', value)}
+                placeholder="Type your last name"
+                value={lastname || item.lastName}
+                onChangeText={value => setLastName(value)}
               />
               <Gap height={16} />
               <InputText
                 label="Age"
-                placeholder="Type your age"
+                placeholder="Type your agee"
                 textContentType="telephoneNumber"
                 dataDetectorTypes="phoneNumber"
                 keyboardType="phone-pad"
-                value={form.age}
-                onChangeText={value => setForm('age', value)}
+                value={agee}
+                onChangeText={value => setAgee(value)}
               />
               <Gap height={16} />
               <InputText
                 label="Photo"
-                placeholder="Input Link Image"
-                value={form.photo}
-                onChangeText={value => setForm('photo', value)}
+                placeholder="Type your photo"
+                value={image || item.photo}
+                onChangeText={value => setImage(value)}
               />
               <Gap height={16} />
               <Button title="Edit" onPress={() => onEdit(item.id)} />
@@ -217,17 +237,25 @@ const Contact = () => {
 
   return (
     <SafeAreaView style={{flex: 1}}>
-      <Searchbar
-        value={searchText}
-        placeholder={'Search Contact'}
-        containerStyle={{
-          width: width * 0.73,
-          marginLeft: RFValue(-8),
-        }}
-        onClear={() => setSearchText('')}
-        onChangeText={text => handleSearch(text)}
-      />
-      <ScrollView>
+      <ScrollView
+        refreshControl={
+          <RefreshControl
+            onRefresh={() => onRefresh()}
+            refreshing={refresh}
+            enabled={true}
+          />
+        }>
+        <Searchbar
+          value={searchText}
+          placeholder={'Search Contact'}
+          containerStyle={{
+            width: width * 0.73,
+            marginLeft: RFValue(-8),
+          }}
+          onClear={() => setSearchText('')}
+          onChangeText={text => handleSearch(text)}
+        />
+
         {searchText === '' ? (
           <FlatList
             data={contact}
@@ -261,6 +289,7 @@ const Contact = () => {
         closeOnDragDown={true}
         closeOnPressMask={true}
         closeOnPressBack={true}
+        keyboardAvoidingViewEnabled={true}
         height={500}
         openDuration={250}
         customStyles={{
@@ -279,7 +308,7 @@ const Contact = () => {
           <Gap height={16} />
           <InputText
             label="Last Name"
-            placeholder="Type your laste name"
+            placeholder="Type your last name"
             value={form.lastName}
             onChangeText={value => setForm('lastName', value)}
           />

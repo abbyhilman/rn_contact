@@ -7,7 +7,7 @@ import store from './src/redux/store';
 import FlashMessage from 'react-native-flash-message';
 import Loading from './src/components/Loading';
 
-//console.disableYellowBox = true;
+console.disableYellowBox = true;
 
 const MainApp = () => {
   const {isLoading} = useSelector(state => state.globalReducer);

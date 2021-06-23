@@ -28,5 +28,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 10,
     margin: 10,
+    color: '#020202',
   },
 });
